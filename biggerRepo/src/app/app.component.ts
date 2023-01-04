@@ -20,10 +20,23 @@ export class AppComponent implements OnInit {
       gender: new FormControl(null, Validators.required),
       hobby: new FormArray([]),
     });
+
+    // this.formSignup.valueChanges.subscribe((value) => console.log(value));
+    this.formSignup.statusChanges.subscribe((value) => console.log(value));
+
+    this.formSignup.setValue({
+      userData: {
+        username: 'Alex',
+        email: '15aleksi.mima@gmail.com',
+      },
+      gender: 'male',
+      hobby: [],
+    });
   }
 
   onSubmit() {
     console.log(this.formSignup);
+    this.formSignup.reset();
   }
 
   onNewHobby() {
