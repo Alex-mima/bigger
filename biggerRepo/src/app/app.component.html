@@ -1,1 +1,71 @@
 <p>Bigger, B...</p>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+      <form [formGroup]="formSignup" (ngSubmit)="onSubmit()">
+        <div formGroupName="userData">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              formControlName="username"
+              class="form-control"
+            />
+            <span
+              *ngIf="
+                !formSignup.get('userData.username').valid &&
+                formSignup.get('userData.username').touched
+              "
+              class="help-block"
+              >Please enter e valid username!</span
+            >
+          </div>
+          <div class="form-group">
+            <label for="email">email</label>
+            <input
+              type="text"
+              id="email"
+              formControlName="email"
+              class="form-control"
+            />
+            <span
+              *ngIf="
+                !formSignup.get('userData.email').valid &&
+                formSignup.get('userData.email').touched
+              "
+              class="help-block"
+              >Please enter e valid email!</span
+            >
+          </div>
+        </div>
+        <div class="radio" *ngFor="let gender of genders">
+          <label>
+            <input type="radio" formControlName="gender" [value]="gender" />{{
+              gender
+            }}
+          </label>
+        </div>
+        <div formArrayName="hobby">
+          <h4>Your Hobbies</h4>
+          <div
+            class="form-group"
+            *ngFor="let hobbyControl of getControls(); let i = index"
+          >
+            <input type="text" [formControlName]="i" class="form-control" />
+          </div>
+          <button class="btn btn-primary" type="button" (click)="onNewHobby()">
+            Add a Hobby
+          </button>
+        </div>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="!formSignup.valid"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
