@@ -2,6 +2,6 @@
   margin-top: 30px;
 }
 
-input.ng-invalid.ng-touched {
-  border: 1px solid red;
+.row {
+  margin: 20px 0;
 }
