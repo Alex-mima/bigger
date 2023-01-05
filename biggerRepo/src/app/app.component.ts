@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -7,22 +7,44 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  loadedPosts = [];
+  title = 'biggerRepo';
+  genders = ['male', 'female'];
+  formSignup: FormGroup;
 
-  constructor(private http: HttpClient) {}
+  ngOnInit() {
+    this.formSignup = new FormGroup({
+      userData: new FormGroup({
+        username: new FormControl(null, Validators.required),
+        email: new FormControl(null, [Validators.required, Validators.email]),
+      }),
+      gender: new FormControl(null, Validators.required),
+      hobby: new FormArray([]),
+    });
 
-  ngOnInit() {}
+    // this.formSignup.valueChanges.subscribe((value) => console.log(value));
+    this.formSignup.statusChanges.subscribe((value) => console.log(value));
 
-  onCreatePost(postData: { title: string; content: string }) {
-    // Send Http request
-    console.log(postData);
+    this.formSignup.setValue({
+      userData: {
+        username: 'Alex',
+        email: '15aleksi.mima@gmail.com',
+      },
+      gender: 'male',
+      hobby: [],
+    });
   }
 
-  onFetchPosts() {
-    // Send Http request
+  onSubmit() {
+    console.log(this.formSignup);
+    this.formSignup.reset();
   }
 
-  onClearPosts() {
-    // Send Http request
+  onNewHobby() {
+    const control = new FormControl(null, Validators.required);
+    (<FormArray>this.formSignup.get('hobby')).push(control);
+  }
+
+  getControls() {
+    return (<FormArray>this.formSignup.get('hobby')).controls;
   }
 }
