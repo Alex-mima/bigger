@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
+import { Post } from './post';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -20,7 +21,7 @@ export class AppComponent {
   onCreatePost(postData: { title: string; content: string }) {
     // Send Http request
     this.http
-      .post(
+      .post<{ name: string }>(
         'https://first-project-90176-default-rtdb.europe-west1.firebasedatabase.app/post.json',
         postData
       )
@@ -40,14 +41,14 @@ export class AppComponent {
 
   private fetchPosts() {
     this.http
-      .get(
+      .get<{ [key: string]: Post }>(
         'https://first-project-90176-default-rtdb.europe-west1.firebasedatabase.app/post.json'
       )
       .pipe(
         //pipe is a method that allows you to funnel your observable data through multiple operators before they reach the subscribe method
-        map((responseData: any) => {
+        map((responseData) => {
           //the map operator allows us to get some data and return new data which is then automatically re wrapped into an observable so that we can still subscribe to it.
-          const postsArray = [];
+          const postsArray: Post[] = [];
           for (const key in responseData) {
             if (responseData.hasOwnProperty(key)) {
               postsArray.push({ ...responseData[key], id: key });
