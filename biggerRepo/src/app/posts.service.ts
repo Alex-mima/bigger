@@ -39,4 +39,10 @@ export class PostsService {
         })
       );
   }
+
+  clearAndDestroyPosts(): Observable<any> {
+    return this.http.delete(
+      'https://first-project-90176-default-rtdb.europe-west1.firebasedatabase.app/post.json'
+    );
+  }
 }

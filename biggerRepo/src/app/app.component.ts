@@ -40,5 +40,8 @@ export class AppComponent {
 
   onClearPosts() {
     // Send Http request
+    this.postsaqi.clearAndDestroyPosts().subscribe(() => {
+      this.loadedPosts = [];
+    });
   }
 }
