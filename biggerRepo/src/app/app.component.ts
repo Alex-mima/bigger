@@ -1,7 +1,9 @@
+import { PostsService } from './posts.service';
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+
 import { Post } from './post';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,57 +11,34 @@ import { Post } from './post';
 })
 export class AppComponent {
   title = 'biggerRepo';
+  isFetching = false;
 
-  loadedPosts = [];
+  loadedPosts: Post[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private postsaqi: PostsService) {}
 
   ngOnInit() {
-    this.fetchPosts();
+    this.isFetching = true;
+    this.postsaqi.fetchPosts().subscribe((posts) => {
+      this.isFetching = false;
+      this.loadedPosts = posts;
+    });
   }
 
-  onCreatePost(postData: { title: string; content: string }) {
+  onCreatePost(postData: Post) {
     // Send Http request
-    this.http
-      .post<{ name: string }>(
-        'https://first-project-90176-default-rtdb.europe-west1.firebasedatabase.app/post.json',
-        postData
-      )
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });
+    this.postsaqi.createAndStorePost(postData.title, postData.content);
   }
 
   onFetchPosts() {
-    // Send Http request
-    this.fetchPosts();
+    this.isFetching = true;
+    this.postsaqi.fetchPosts().subscribe((posts) => {
+      this.isFetching = false;
+      this.loadedPosts = posts;
+    });
   }
 
   onClearPosts() {
     // Send Http request
-  }
-
-  private fetchPosts() {
-    this.http
-      .get<{ [key: string]: Post }>(
-        'https://first-project-90176-default-rtdb.europe-west1.firebasedatabase.app/post.json'
-      )
-      .pipe(
-        //pipe is a method that allows you to funnel your observable data through multiple operators before they reach the subscribe method
-        map((responseData) => {
-          //the map operator allows us to get some data and return new data which is then automatically re wrapped into an observable so that we can still subscribe to it.
-          const postsArray: Post[] = [];
-          for (const key in responseData) {
-            if (responseData.hasOwnProperty(key)) {
-              postsArray.push({ ...responseData[key], id: key });
-            }
-          }
-          return postsArray;
-        })
-      )
-      .subscribe((posts) => {
-        // ...
-        console.log(posts);
-      });
   }
 }
