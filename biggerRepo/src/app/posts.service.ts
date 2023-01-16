@@ -1,11 +1,14 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Post } from './post';
-import { map, Observable } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
 export class PostsService {
+  error = new Subject<string>();
+
   constructor(private http: HttpClient) {}
 
   createAndStorePost(titlelaqi: string, contentaqi: string) {
@@ -15,15 +18,19 @@ export class PostsService {
         'https://first-project-90176-default-rtdb.europe-west1.firebasedatabase.app/post.json',
         postData
       )
-      .subscribe((responseData) => {
-        console.log(responseData);
+      .subscribe({
+        next: (responseData) => console.log(responseData),
+        error: (error) => console.log(error.message),
       });
   }
 
   fetchPosts(): Observable<Post[]> {
     return this.http
       .get<{ [key: string]: Post }>(
-        'https://first-project-90176-default-rtdb.europe-west1.firebasedatabase.app/post.json'
+        'https://first-project-90176-default-rtdb.europe-west1.firebasedatabase.app/post.json',
+        {
+          headers: new HttpHeaders({ 'custom-Header': 'Hallo' }),
+        }
       )
       .pipe(
         //pipe is a method that allows you to funnel your observable data through multiple operators before they reach the subscribe method
@@ -37,6 +44,9 @@ export class PostsService {
           }
           return postsArray;
         })
+        // catchError((errorRes) => {
+        //   return throwError(errorRes);
+        // })
       );
   }
 
